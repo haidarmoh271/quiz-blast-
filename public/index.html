@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>QuizBlast 🎮</title>
+<link rel="manifest" href="/manifest.json"/>
+<meta name="theme-color" content="#e94560"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="QuizBlast"/>
+<link rel="apple-touch-icon" href="/icons/icon-192.png"/>
+<script>
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',()=>{
+      navigator.serviceWorker.register('/sw.js')
+        .then(()=>console.log('SW registered'))
+        .catch(e=>console.log('SW error',e));
+    });
+  }
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Tajawal',sans-serif;
+    min-height:100vh;
+    background: linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+  }
+  .container{
+    text-align:center;
+    padding:2rem;
+    max-width:500px;
+    width:100%;
+  }
+  .logo{
+    font-size:4rem;margin-bottom:0.5rem;
+    animation:bounce 2s infinite;
+  }
+  @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+  h1{font-size:2.5rem;font-weight:900;margin-bottom:0.3rem;
+     background:linear-gradient(90deg,#e94560,#f5a623);
+     -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+  .subtitle{color:#aaa;margin-bottom:2.5rem;font-size:1.1rem;}
+
+  .card{
+    background:rgba(255,255,255,0.07);
+    border:1px solid rgba(255,255,255,0.15);
+    backdrop-filter:blur(10px);
+    border-radius:20px;
+    padding:2rem;
+    margin-bottom:1rem;
+  }
+  .card h2{font-size:1.3rem;margin-bottom:1.2rem;color:#f5a623;}
+
+  .btn{
+    display:block;width:100%;padding:1rem;
+    border:none;border-radius:12px;font-size:1.1rem;
+    font-family:'Tajawal',sans-serif;font-weight:700;
+    cursor:pointer;transition:all 0.2s;margin-bottom:0.8rem;
+    text-decoration:none;text-align:center;
+  }
+  .btn-host{background:linear-gradient(135deg,#e94560,#c62a47);color:#fff;}
+  .btn-play{background:linear-gradient(135deg,#0f9b8e,#0a6b61);color:#fff;}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.3);}
+
+  input{
+    width:100%;padding:0.9rem 1rem;border-radius:12px;
+    border:2px solid rgba(255,255,255,0.2);
+    background:rgba(255,255,255,0.1);color:#fff;
+    font-size:1.1rem;font-family:'Tajawal',sans-serif;
+    outline:none;margin-bottom:0.8rem;text-align:center;
+  }
+  input::placeholder{color:#aaa;}
+  input:focus{border-color:#e94560;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">🎮</div>
+  <h1>QuizBlast</h1>
+  <p class="subtitle">لعبة مسابقات تفاعلية للفصول والمجموعات</p>
+
+  <div class="card">
+    <h2>🎯 هل أنت مضيف؟</h2>
+    <a class="btn btn-host" href="/host.html">إنشاء مسابقة جديدة</a>
+  </div>
+
+  <div class="card">
+    <h2>🕹️ هل أنت لاعب؟</h2>
+    <a class="btn btn-play" href="/play.html">الانضمام بكود اللعبة</a>
+  </div>
+</div>
+</body>
+</html>

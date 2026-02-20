@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ALPHA Quiz</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=Barlow+Condensed:ital,wght@1,800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+  font-family:'Tajawal',sans-serif;
+  min-height:100vh;
+  background:#111;
+  color:#fff;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+
+/* النقش من الصورة الأصلية كـ cover */
+.bg-pattern{
+  position:fixed;inset:0;z-index:0;
+  background-image: url('/alpha-logo.jpg');
+  background-size: cover;
+  background-position: left center;
+  background-repeat: no-repeat;
+  opacity: 0.12;
+  filter: grayscale(100%) contrast(200%);
+  transform: scale(1.1);
+}
+
+/* تدرج فوق النقش */
+.bg-overlay{
+  position:fixed;inset:0;z-index:1;
+  background: radial-gradient(ellipse at center, rgba(17,17,17,0.4) 0%, rgba(17,17,17,0.9) 100%);
+}
+
+.container{
+  text-align:center;padding:2rem;
+  max-width:460px;width:100%;
+  position:relative;z-index:2;
+}
+
+/* الشعار */
+.logo-wrap{
+  margin-bottom:0.5rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+}
+
+.logo-text{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:5.5rem;font-weight:800;font-style:italic;
+  color:#fff;letter-spacing:-0.01em;line-height:88px;
+  text-transform:uppercase;
+  text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
+}
+
+.logo-sub{
+  font-size:0.65rem;letter-spacing:0.5em;
+  color:#555;text-transform:uppercase;
+  margin-top:0.3rem;
+}
+
+.divider{
+  width:100%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);
+  margin:1.5rem 0;
+}
+
+.section-label{
+  font-size:0.72rem;letter-spacing:0.4em;
+  color:#555;text-transform:uppercase;margin-bottom:1.5rem;
+}
+
+.card{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:3px;padding:1.5rem;
+  margin-bottom:0.8rem;position:relative;overflow:hidden;
+}
+.card::after{
+  content:'';position:absolute;
+  top:0;right:0;width:2px;height:100%;
+  background:rgba(255,255,255,0.4);
+}
+.card-label{
+  font-size:0.72rem;letter-spacing:0.35em;
+  color:#555;text-transform:uppercase;margin-bottom:1rem;
+}
+
+.btn{
+  display:block;width:100%;padding:0.9rem;
+  border:none;border-radius:2px;
+  font-size:0.95rem;letter-spacing:0.2em;
+  font-family:'Tajawal',sans-serif;font-weight:700;
+  cursor:pointer;transition:all 0.15s;
+  text-decoration:none;text-align:center;
+  text-transform:uppercase;
+}
+.btn-host{background:#fff;color:#111;}
+.btn-host:hover{background:#e0e0e0;transform:translateY(-1px);}
+.btn-play{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2);}
+.btn-play:hover{border-color:#fff;background:rgba(255,255,255,0.05);transform:translateY(-1px);}
+
+.powered{
+  margin-top:2rem;font-size:0.62rem;
+  color:#2a2a2a;letter-spacing:0.35em;text-transform:uppercase;
+}
+</style>
+</head>
+<body>
+
+<div class="bg-pattern"></div>
+<div class="bg-overlay"></div>
+
+<div class="container">
+  <div class="logo-wrap">
+    <div class="logo-text">ALPHA</div>
+  </div>
+  <div class="logo-sub">Cyber Cafe • Quiz Night</div>
+  <div class="divider"></div>
+  <div class="section-label">اختر دورك</div>
+
+  <div class="card">
+    <div class="card-label">🎯 للمضيف</div>
+    <a class="btn btn-host" href="/host.html">إنشاء مسابقة</a>
+  </div>
+
+  <div class="card">
+    <div class="card-label">🕹️ للاعب</div>
+    <a class="btn btn-play" href="/play.html">الانضمام بالكود</a>
+  </div>
+
+  <div class="powered">ALPHA Cyber Cafe © 2026</div>
+  <a href="/admin.html" style="display:block;margin-top:0.8rem;font-size:0.65rem;letter-spacing:0.3em;color:#222;text-transform:uppercase;text-decoration:none;transition:color 0.15s" onmouseover="this.style.color='#555'" onmouseout="this.style.color='#222'">⚙ لوحة المراقبة</a>
+  <a href="https://www.instagram.com/alpha.iq_" target="_blank" style="display:inline-flex;align-items:center;gap:0.5rem;margin-top:1rem;color:#fff;text-decoration:none;font-size:0.85rem;letter-spacing:0.15em;opacity:0.6;transition:opacity 0.2s;border:1px solid rgba(255,255,255,0.15);padding:0.5rem 1.2rem;border-radius:20px;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.6"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg><span>@alpha.iq_</span></a>
+</div>
+</body>
+</html>

@@ -9,69 +9,59 @@ const server = http.createServer(app);
 const io = new Server(server);
 const PORT = process.env.PORT || 3000;
 
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // AI Key Endpoint — يمرر المفتاح من Railway environment variable
 // ── Claude API مع Web Search للأسئلة الحديثة ──
-const https = require('https');
-function httpsPost(url, headers, body) {
-  return new Promise((resolve, reject) => {
-    const u = new URL(url);
-    const data = JSON.stringify(body);
-    const req = https.request({
-      hostname: u.hostname, path: u.pathname,
-      method: 'POST',
-      headers: { ...headers, 'Content-Length': Buffer.byteLength(data) }
-    }, (res) => {
-      let raw = '';
-      res.on('data', c => raw += c);
-      res.on('end', () => { try { resolve(JSON.parse(raw)); } catch(e){ reject(e); } });
-    });
-    req.on('error', reject);
-    req.write(data);
-    req.end();
-  });
-}
-
-app.post('/ai-recent', async (req, res) => {
-  const { topic, count, difficulty } = req.body;
+app.post('/ai-recent', (req, res) => {
+  const { topic, count, difficulty } = req.body || {};
   const apiKey = process.env.ANTHROPIC_API_KEY || '';
   if(!apiKey) return res.status(400).json({ error: 'ANTHROPIC_API_KEY غير مضبوط في Railway' });
+  if(!topic) return res.status(400).json({ error: 'الموضوع مطلوب' });
 
-  try {
-    const data = await httpsPost('https://api.anthropic.com/v1/messages', {
+  const bodyStr = JSON.stringify({
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 4000,
+    tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+    messages: [{ role: 'user', content:
+      'ابحث عن أحدث الأخبار عن "' + topic + '" ثم أنشئ ' + (count||5) + ' سؤال اختيار من متعدد باللغة العربية عن أحداث حديثة. مستوى الصعوبة: ' + (difficulty||'متوسط') + '. قواعد: 4 خيارات، خيار واحد صحيح. أجب بـ JSON فقط: [{"question":"...","answers":["...","...","...","..."],"correct":0}]'
+    }]
+  });
+
+  const options = {
+    hostname: 'api.anthropic.com',
+    path: '/v1/messages',
+    method: 'POST',
+    headers: {
       'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(bodyStr),
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
       'anthropic-beta': 'web-search-2025-03-05'
-    }, {
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 4000,
-      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-      messages: [{ role: 'user', content:
-        `ابحث عن أحدث الأخبار والأحداث عن "${topic}" ثم أنشئ ${count} سؤال اختيار من متعدد باللغة العربية عن أحداث حديثة ومستجدات حقيقية. مستوى الصعوبة: ${difficulty}.
-قواعد: كل سؤال 4 خيارات، خيار واحد صحيح، الأسئلة عن أحداث حديثة محددة.
-أجب بـ JSON فقط بدون أي نص آخر:
-[{"question":"...","answers":["...","...","...","..."],"correct":0}]`
-      }]
-    });
-
-    if(data.error || data.type === 'error'){
-      const msg = data.error?.message || JSON.stringify(data);
-      console.error('Anthropic error:', msg);
-      return res.status(500).json({ error: msg });
     }
+  };
 
-    const texts = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text);
-    const text = texts.join('');
-    console.log('AI text preview:', text.substring(0,300));
-    const match = text.match(/\[[\s\S]*\]/);
-    if(!match) return res.status(500).json({ error: 'تعذر تحليل JSON: ' + text.substring(0,150) });
-    res.json({ questions: JSON.parse(match[0]) });
-  } catch(e) {
-    console.error('ai-recent error:', e.message);
-    res.status(500).json({ error: e.message });
-  }
+  const https = require('https');
+  const apiReq = https.request(options, (apiRes) => {
+    let raw = '';
+    apiRes.on('data', chunk => raw += chunk);
+    apiRes.on('end', () => {
+      try {
+        const data = JSON.parse(raw);
+        if(data.type === 'error') return res.status(500).json({ error: data.error?.message || 'Anthropic error' });
+        const texts = (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+        const match = texts.match(/\[[\s\S]*?\]/);
+        if(!match) return res.status(500).json({ error: 'لا يوجد JSON في الرد: ' + texts.substring(0,100) });
+        res.json({ questions: JSON.parse(match[0]) });
+      } catch(e) {
+        res.status(500).json({ error: 'parse error: ' + e.message });
+      }
+    });
+  });
+  apiReq.on('error', e => res.status(500).json({ error: e.message }));
+  apiReq.write(bodyStr);
+  apiReq.end();
 });
 
 app.get('/ai-key', (req, res) => {
